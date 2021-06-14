@@ -28,11 +28,11 @@ class Analyze:
         self.url = "https://www.instagram.com"
         self.driver.get(self.url)
         self.tags = tags
-        # self.login()
-        # self.Search(self.tags)
+        
 
     def login(self):
-
+        username = input("Enter username of your instagram : ")
+        password = input("Enter Password : ")
         action = ActionChains(self.driver)
         wait = WebDriverWait(self.driver,100)
         wait.until(ec.presence_of_element_located((By.XPATH,'/html/body/div[1]/section/main/article/div[2]/div[1]/div/form/div/div[1]/div/label/input')))
@@ -40,13 +40,13 @@ class Analyze:
         userInput = self.driver.find_element_by_xpath("/html/body/div[1]/section/main/article/div[2]/div[1]/div/form/div/div[1]/div/label/input")
         action.click(userInput)
         action.perform()
-        userInput.send_keys("prathik._.03")
+        userInput.send_keys(username)
         
         password = self.driver.find_element_by_xpath("/html/body/div[1]/section/main/article/div[2]/div[1]/div/form/div/div[2]/div/label/input")
         action.click(userInput)
         action.perform()
 
-        password.send_keys("pappu030700")
+        password.send_keys(password)
         
         login = self.driver.find_element_by_xpath("/html/body/div[1]/section/main/article/div[2]/div[1]/div/form/div/div[3]/button")
         action.click(on_element=login)
@@ -56,46 +56,33 @@ class Analyze:
         return self.Search(self.tags)
         
     def Search(self,tags):
-        # print("f1")
         action = ActionChains(self.driver)
         TagLink = []
         for tag,val in tags.items():
-            # print("1")
             wait = WebDriverWait(self.driver,100)
             wait.until(ec.presence_of_element_located((By.XPATH,'/html/body/div[1]/section/nav/div[2]/div/div/div[2]/input')))
-            # print("2")
             
             SearchBar = self.driver.find_element_by_xpath("/html/body/div[1]/section/nav/div[2]/div/div/div[2]/input")
-            # print("3")
             SearchBar.send_keys("#"+tag)
-            # print("4")
             wait = WebDriverWait(self.driver,10)
             wait.until(ec.presence_of_element_located((By.CSS_SELECTOR,'div._01UL2 div.fuqBx div a.-qQT3')))
-            # print("5")
             wait = WebDriverWait(self.driver,100)
-            # if not errorRes:
-            # print("6")
+           
             FoundTags = self.driver.find_elements_by_css_selector("div._01UL2 div.fuqBx div a.-qQT3")
-            # print("7")
             for i in range(min(10,len(FoundTags))):
-                # print("8")
                 try:
                     TagLink.append(FoundTags[i].get_attribute('href'))
                 except:
                     pass
-            # print("9")
             SearchBar.clear()            
 
-        # print(TagLink)
-        # print("end f1")
+        
         return self.FindTopTags(TagLink)
 
     def FindTopTags(self,TagList):
-        # print("f2")
         TagInfo = {}
         DateTimeFormat = '%Y-%m-%dT%H:%M:%S.%fZ'
         for tag in TagList:
-            # print("inside for loop !!!")
             self.driver.get(tag)
             soup = bs(self.driver.page_source,"lxml")
             try:
@@ -109,9 +96,7 @@ class Analyze:
             for a in soup.find_all('a',href=True):
                 PostLinks.append(a['href'])
             
-            # print("\n\n",PostLinks)
             PostLinks = [x for x in PostLinks if x.startswith('/p/')][:5]
-            # print("\n\n",PostLinks)
             try:
                 self.driver.get('https://www.instagram.com'+str(PostLinks[0]))
                 soup = bs(self.driver.page_source,"lxml")
@@ -198,19 +183,21 @@ class Find_Tags_Of_Image():
 
 
 if __name__ == '__main__':
-
-    setup = SettingUp("c3f7d810d60b46479b99e7730f97321a")
+    
+    key = ""   # api key --> add the clarifai api key 
+    
+    setup = SettingUp(key) 
     channel,stub,metadata = setup.ReturnData()
     Predict = Find_Tags_Of_Image(stub,metadata)
     try:
         Cache = pkl.load(open("Cache.pkl","rb"))
     except:
         Cache = None
-    FileUrl = r"C:\college\Personal\Images\IMG-20190215-WA0025.jpg"
+    FileUrl = r"" #  Add the File URL in your local machine for which you want to find the hashtags
+    
     if Cache is None or FileUrl not in Cache:
         Tags = Predict.PredictTags(FileUrl)
         print(Tags)
-        # Tags = {"beach":0.33,"man":0.6}
         DriverObj = WebDriverSetup()
         driver = DriverObj.ReturnDriver()
         TagAnalysis = Analyze(driver,Tags)
@@ -219,10 +206,10 @@ if __name__ == '__main__':
         temp = {}
         temp[FileUrl] = Report
         pkl.dump(temp,open("Cache.pkl","wb"))
+        
     else:
         Report = Cache[FileUrl]
 
     print("Our Suggesstion of Hashtags for your Pic: \n")
     for info in Report:
         print(info[0],' Hashatg --> Total Posts : ',info[1]," and Post Frequency : ",info[2])
-    # print(Report)

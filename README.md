@@ -1,7 +1,8 @@
 # MakeItViral
-### A smart hashtag recommender based on your picture.
 
-### Pre-Requisite
+A smart hashtag recommender based on your picture.
+
+## Pre-Requisite
 
 ### `Clarifai Account`
 
@@ -30,7 +31,7 @@ pip install -r requirements.txt
 
 Open MakeItViral.py 
 
-copy the API key paste it in `**key**` and `**FileURL**` variable in the main code of the script respectively.
+copy the API key paste it in `key` and `FileURL` variable in the main code of the script respectively.
 
 ### `Run`
 

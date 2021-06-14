@@ -12,7 +12,7 @@ Make an account in Clarifai. Use this link to make an account
 
 The main aim of the project is to find the most relevant instagram hashtags based on the picture you want to upload.
 
-### Steps to run the project
+## Steps to run the project
 
 ### `Clone the Repo`
 

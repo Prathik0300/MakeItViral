@@ -6,7 +6,7 @@ A smart hashtag recommender based on your picture.
 
 ### `Clarifai Account`
 
-Make an account in Clarifai. Use this link to make an account
+Make an account in Clarifai. Use [this](https://www.clarifai.com/) link to make an account
 
 ### `Instagram Account`
 
